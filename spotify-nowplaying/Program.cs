@@ -89,8 +89,15 @@ namespace spotify_nowplaying
                 stream.Write(song.Title);
                 stream.Close();
             }
-            song.DownloadAlbumArt(config);
-            song.CreateStreamPanel(config);
+
+            if (song.DownloadAlbumArt(config))
+            {
+                song.CreateStreamPanel(config);
+            }
+            else
+            {
+                song.CreateStreamPanel(config, true);
+            }
         }
 
         private static void clearFiles(Config config)

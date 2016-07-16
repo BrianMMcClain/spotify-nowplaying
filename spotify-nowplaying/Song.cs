@@ -51,7 +51,7 @@ namespace spotify_nowplaying
             this._title = title;
         }
 
-        public void DownloadAlbumArt(Config config)
+        public bool DownloadAlbumArt(Config config)
         {
             // Lookup the album art
             RestClient client = new RestClient("http://api.spotify.com");
@@ -75,19 +75,16 @@ namespace spotify_nowplaying
                     using (WebClient imgClient = new WebClient())
                     {
                         imgClient.DownloadFile(imgUri, Path.Combine(config.Storage, "album.png"));
+                        return true;
                     }
                 }
-                else
-                {
-                    swapPlaceholder(config);
-                }
-
             } catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine("Error downloading album art");
-                swapPlaceholder(config);
             }
+
+            return false;
         }
 
         private void clearAlbumArt(String path)
@@ -111,32 +108,26 @@ namespace spotify_nowplaying
 
         public void CreateStreamPanel(Config config)
         {
+            CreateStreamPanel(config, false);
+        }
+
+        public void CreateStreamPanel(Config config, bool placeholder)
+        {
             Image template = Image.FromFile(Path.Combine(config.Storage, "template.png"));
-            Image album = Image.FromFile(Path.Combine(config.Storage, "album.png"));
+            Image album = null;
+            if (placeholder)
+            {
+                album = Image.FromFile(Path.Combine(config.Storage, "placeholder.png"));
+            }
+            else
+            {
+                album = Image.FromFile(Path.Combine(config.Storage, "album.png"));
+            }
             Graphics g = Graphics.FromImage(template);
             g.DrawImage(album, 0, 0, 64, 64);
             g.DrawString(_artist, new Font(FontFamily.GenericMonospace, 12, FontStyle.Regular), new SolidBrush(Color.White), 72, 8);
             g.DrawString(_title, new Font(FontFamily.GenericMonospace, 12, FontStyle.Regular), new SolidBrush(Color.White), 72, 28);
             template.Save(config.Output, ImageFormat.Png);
-        }
-
-        private void swapPlaceholder(Config config)
-        {
-            bool swapped = false;
-            int tryCount = 100;
-
-            while (!swapped && tryCount > 0)
-            {
-                try
-                {
-                    File.Copy(config.Placeholder, Path.Combine(config.Storage, "album.png"), true);
-                    swapped = true;
-                } catch (Exception e)
-                {
-                    tryCount--;
-                    Thread.Sleep(10);
-                }
-            }
         }
     }
 }
