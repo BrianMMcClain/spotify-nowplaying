@@ -37,6 +37,11 @@ namespace spotify_nowplaying
             set { _placeholder = value; }
         }
 
+        /// <summary>
+        /// Parse the config file
+        /// </summary>
+        /// <param name="path">Path to the config file</param>
+        /// <returns></returns>
         public static Config ParseConfig(String path)
         {
             if (File.Exists(path))

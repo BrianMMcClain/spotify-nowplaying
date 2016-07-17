@@ -18,17 +18,29 @@ namespace spotify_nowplaying
     class Song
     {
         string _artist;
+        /// <summary>
+        /// Artist of the song
+        /// </summary>
         public String Artist
         {
             get { return _artist; }
         }
 
         string _title;
+        /// <summary>
+        /// Track title of the song
+        /// </summary>
         public String Title
         {
             get { return _title; }
         }
 
+        /// <summary>
+        /// Parses the title of the Spotify window to determin the artist
+        /// and song name
+        /// </summary>
+        /// <param name="windowTitle">Spotify window title</param>
+        /// <returns></returns>
         public static Song ProccessTitle(String windowTitle)
         {
             int splitLocation = windowTitle.IndexOf(" - ");
@@ -51,6 +63,11 @@ namespace spotify_nowplaying
             this._title = title;
         }
 
+        /// <summary>
+        /// Downloads the album art for the current song
+        /// </summary>
+        /// <param name="config">Parsed config to determine where to store the album art</param>
+        /// <returns></returns>
         public bool DownloadAlbumArt(Config config)
         {
             // Lookup the album art
@@ -106,11 +123,20 @@ namespace spotify_nowplaying
             }
         }
 
+        /// <summary>
+        /// Create the "Now Playing" panel
+        /// </summary>
+        /// <param name="config">Parsed config</param>
         public void CreateStreamPanel(Config config)
         {
             CreateStreamPanel(config, false);
         }
 
+        /// <summary>
+        /// Create the "Now Playing" panel
+        /// </summary>
+        /// <param name="config">Parsed config</param>
+        /// <param name="placeholder">Use the album art placeholder image</param>
         public void CreateStreamPanel(Config config, bool placeholder)
         {
             Image template = Image.FromFile(Path.Combine(config.Storage, "template.png"));
